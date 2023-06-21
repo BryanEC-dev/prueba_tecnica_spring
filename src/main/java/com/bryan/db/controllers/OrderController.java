@@ -1,16 +1,22 @@
 package com.bryan.db.controllers;
 
+import com.bryan.db.dto.OrderRequest;
+import com.bryan.db.dto.OrderResponse;
 import com.bryan.db.models.Order;
 import com.bryan.db.services.OrderServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Validated
 @RequestMapping("/order")
 public class OrderController {
 
@@ -56,15 +62,33 @@ public class OrderController {
         return ResponseEntity.ok().body(orders);
     }
 
-    @PostMapping("add/order")
-    public ResponseEntity<String> addOrder() {
+    @PostMapping("/")
+    public ResponseEntity<String> addOrder(@Valid @RequestBody OrderRequest payload) {
 
-        return ResponseEntity.ok().body("hola");
+        orderService.addOrder(payload);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("update/status")
-    public ResponseEntity<String> changeStatus() {
-        return ResponseEntity.ok().body("hola");
+    @PutMapping("/status")
+    public ResponseEntity<String> changeStatus(@RequestBody OrderRequest payload) {
+
+        try {
+            if(payload.getStatus() == null || payload.getId() <= 0){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+        Boolean response  = orderService.updateStatus(payload);
+
+        if(! response){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)   ;
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("statistics")

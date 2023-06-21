@@ -1,7 +1,9 @@
 package com.bryan.db.services;
 
+import com.bryan.db.dto.OrderRequest;
 import com.bryan.db.models.Order;
 import com.bryan.db.repository.OrderDaoI;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +28,32 @@ public class OrderService implements OrderServiceI {
     }
 
     @Override
-    public String addOrder() {
-        return null;
+    public Boolean addOrder(OrderRequest orderRequest) {
+        Order order = new Order();
+        order.setDirection(orderRequest.getDirection());
+        order.setStatus(orderRequest.getStatus());
+
+         orderDao.save(order);
+
+
+        return true;
     }
 
     @Override
-    public String updateStatus() {
-        return null;
+    public Boolean updateStatus(OrderRequest orderRequest) {
+
+        Optional <Order> existsOrder = orderDao.findById((long) orderRequest.getId());
+
+        if(existsOrder.isEmpty()){
+            return false;
+        }
+        Order order = existsOrder.get();
+
+        order.setStatus(orderRequest.getStatus());
+
+        orderDao.save(order);
+        return true;
+
     }
 
     @Override

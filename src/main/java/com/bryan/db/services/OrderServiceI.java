@@ -1,5 +1,6 @@
 package com.bryan.db.services;
 
+import com.bryan.db.dto.OrderRequest;
 import com.bryan.db.models.Order;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface OrderServiceI {
 
     List<Order> getAllOrder(int limit, int offset);
 
-     String addOrder();
+     Boolean addOrder(OrderRequest order);
 
-     String updateStatus();
+    Boolean updateStatus(OrderRequest order);
 
     public String getStatistics();
 }
