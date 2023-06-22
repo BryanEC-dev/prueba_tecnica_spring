@@ -3,6 +3,7 @@ package com.bryan.db.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -14,4 +15,6 @@ public class Order {
     private Long id;
     private String status;
     private String direction;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails;
 }

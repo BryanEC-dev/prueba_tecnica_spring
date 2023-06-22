@@ -15,6 +15,9 @@ public interface OrderDaoI extends JpaRepository<Order, Long> {
 
      Optional<Order> findById(Long id);
 
+     @Query("SELECT o FROM Order o JOIN FETCH o.orderDetails WHERE o.id= :id")
+     Optional<Order> findByIdWithOrderDetails(Long id);
+
     @Query(value = "SELECT * FROM orders LIMIT :limit OFFSET :offset", nativeQuery = true)
     List<Order> findOrdersWithLimitAndOffset(@Param("limit") int limit, @Param("offset") int offset);
 }
