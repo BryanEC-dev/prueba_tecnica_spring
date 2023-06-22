@@ -18,8 +18,8 @@ public class OrderService implements OrderServiceI {
 
     @Override
     public Optional<Order> getOrderById(Long id) {
-        //Optional<Order> order = orderDao.findById(id);
-        Optional<Order> order = orderDao.findByIdWithOrderDetails(id);
+        Optional<Order> order = orderDao.findById(id);
+        //Optional<Order> order = orderDao.findByIdWithOrderDetails(id);
         return order;
     }
 
