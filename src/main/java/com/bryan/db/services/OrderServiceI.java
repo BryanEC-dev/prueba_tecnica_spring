@@ -8,11 +8,11 @@ import java.util.Optional;
 
 
 public interface OrderServiceI {
-     Optional<Order> getOrderById(Long id);
+    Optional<Order> getOrderById(Long id);
 
     List<Order> getAllOrder(int limit, int offset);
 
-     Boolean addOrder(OrderRequest order);
+    Boolean addOrder(OrderRequest order);
 
     Boolean updateStatus(OrderRequest order);
 

@@ -1,18 +1,14 @@
 package com.bryan.db.dto;
 
-import com.bryan.db.models.Order;
-import lombok.AllArgsConstructor;
+import com.bryan.db.models.Product;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-
+import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class OrderResponse {
 
-    private Order data;
-    private int responseCode;
-
+    private String status;
+    private String direction;
+    private List<Product> products;
 }

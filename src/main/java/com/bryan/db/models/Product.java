@@ -2,10 +2,8 @@ package com.bryan.db.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Entity

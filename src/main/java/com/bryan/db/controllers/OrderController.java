@@ -1,7 +1,11 @@
 package com.bryan.db.controllers;
 
+import com.bryan.db.dto.EntityDtoConvertOrderToOrderResponse;
 import com.bryan.db.dto.OrderRequest;
 import com.bryan.db.dto.OrderResponse;
+import com.bryan.db.dto.Response;
+import com.bryan.db.exception.NotFoundOrderException;
+import com.bryan.db.exception.WrongTypeParameterException;
 import com.bryan.db.models.Order;
 import com.bryan.db.services.OrderServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,33 +27,39 @@ public class OrderController {
     @Autowired
     OrderServiceI orderService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable String id) {
+    @Autowired
+    EntityDtoConvertOrderToOrderResponse entityDtoConvertOrderOrderResponse;
 
-        Long orderId;
+    @GetMapping("/{id}")
+    public ResponseEntity<Response> getOrderById(@PathVariable String id) throws WrongTypeParameterException {
+
+        long orderId;
         try {
             orderId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            throw new WrongTypeParameterException("Tipo de dato incorrecto");
         }
 
         HttpHeaders responseHeaders = new HttpHeaders();
-
         responseHeaders.set("uuid", "value");
+
         Optional<Order> order = orderService.getOrderById(orderId);
 
-        if (order.isEmpty()){
-            return  ResponseEntity.notFound().build();
+        if (order.isEmpty()) {
+            throw new NotFoundOrderException("No existe el número de orden indicado");
         }
 
-        return ResponseEntity.ok().headers(responseHeaders).body(order.get());
+        OrderResponse orderResponse = entityDtoConvertOrderOrderResponse.convertEntityDto(order.get());
+
+        Response response = new Response(orderResponse, 200, "Consulta exitosa");
+        return new ResponseEntity<>(response, responseHeaders, HttpStatus.OK);
     }
 
     @GetMapping("/")
     public ResponseEntity<List<Order>> getAllOrder(@RequestParam(name = "quantity") String quantity,
-                                            @RequestParam(name = "skip") String skip) {
+                                                   @RequestParam(name = "skip") String skip) {
 
-        int quantityValue ;
+        int quantityValue;
         int skipValue;
         try {
             quantityValue = Integer.parseInt(quantity);
@@ -74,18 +84,18 @@ public class OrderController {
     public ResponseEntity<String> changeStatus(@RequestBody OrderRequest payload) {
 
         try {
-            if(payload.getStatus() == null || payload.getId() <= 0){
+            if (payload.getStatus() == null || payload.getId() <= 0) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
-        Boolean response  = orderService.updateStatus(payload);
+        Boolean response = orderService.updateStatus(payload);
 
-        if(! response){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)   ;
+        if (!response) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);

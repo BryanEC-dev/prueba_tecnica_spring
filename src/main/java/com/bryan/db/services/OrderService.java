@@ -3,11 +3,11 @@ package com.bryan.db.services;
 import com.bryan.db.dto.OrderRequest;
 import com.bryan.db.models.Order;
 import com.bryan.db.repository.OrderDaoI;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -17,35 +17,35 @@ public class OrderService implements OrderServiceI {
     private OrderDaoI orderDao;
 
     @Override
-    public Optional<Order> getOrderById(Long id) {
+    public Optional<Order> getOrderById(Long id) throws NoSuchElementException, RuntimeException {
         Optional<Order> order = orderDao.findById(id);
         //Optional<Order> order = orderDao.findByIdWithOrderDetails(id);
         return order;
     }
 
     @Override
-    public List<Order> getAllOrder(int limit, int offset ) {
+    public List<Order> getAllOrder(int limit, int offset) throws RuntimeException {
         return orderDao.findOrdersWithLimitAndOffset(limit, offset);
     }
 
     @Override
-    public Boolean addOrder(OrderRequest orderRequest) {
+    public Boolean addOrder(OrderRequest orderRequest) throws RuntimeException {
         Order order = new Order();
         order.setDirection(orderRequest.getDirection());
         order.setStatus(orderRequest.getStatus());
 
-         orderDao.save(order);
+        orderDao.save(order);
 
 
         return true;
     }
 
     @Override
-    public Boolean updateStatus(OrderRequest orderRequest) {
+    public Boolean updateStatus(OrderRequest orderRequest) throws RuntimeException {
 
-        Optional <Order> existsOrder = orderDao.findById((long) orderRequest.getId());
+        Optional<Order> existsOrder = orderDao.findById((long) orderRequest.getId());
 
-        if(existsOrder.isEmpty()){
+        if (existsOrder.isEmpty()) {
             return false;
         }
         Order order = existsOrder.get();
@@ -58,7 +58,7 @@ public class OrderService implements OrderServiceI {
     }
 
     @Override
-    public String getStatistics() {
+    public String getStatistics() throws RuntimeException {
         return null;
     }
 }
